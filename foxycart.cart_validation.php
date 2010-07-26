@@ -27,7 +27,7 @@ class FoxyCart_Helper {
 	 * @var string
 	 **/
 	// protected static $cart_url = 'https://yourdomain.foxycart.tld/cart';
-	protected static $cart_url = 'https://themancan.foxycart.com/dev/sandbox_brett/cart';
+	protected static $cart_url = 'https://YOURDOMAIN.foxycart.tld/cart';
 
 
 	/**
