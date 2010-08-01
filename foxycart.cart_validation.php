@@ -4,7 +4,7 @@
  *
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2010
- * @version 0.7.0.20100716
+ * @version 0.7.0.20100730
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
  * @example http://wiki.foxycart.com/docs/cart/validation
  * 
@@ -52,7 +52,7 @@ class FoxyCart_Helper {
 	/**
 	 * Debugging
 	 *
-	 * Set to $debug to TRUE to enable debug logging. This will BREAK the functionality, but will aid in debugging.
+	 * Set to $debug to TRUE to enable debug logging.
 	 *
 	 */
 	protected static $debug = FALSE;
@@ -215,10 +215,12 @@ class FoxyCart_Helper {
 				foreach ($inputs[0] as $input) {
 					$count['inputs']++;
 					// Test to make sure both name and value attributes are found
-					if ((preg_match('%name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(.+?)\1%i', $input, $name) > 0) && (preg_match('%value=([\'"])(.+?)\1%i', $input, $value) > 0)) {
-
+					if (preg_match('%name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(.+?)\1%i', $input, $name) > 0) {
+						preg_match('%value=([\'"])(.*?)\1%i', $input, $value);
+						$value = (count($value) > 0) ? $value : array('', '', '');
 						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.$prefix.htmlspecialchars(preg_quote($name[2])).'</strong>';
 						self::$log[] = '<strong>Replacement Pattern:</strong> ([\'"])'.$prefix.preg_quote($name[2]).'\1';
+						$value[2] = ($value[2] == '') ? '--OPEN--' : $value[2];
 						$input_signed = preg_replace('%([\'"])'.$prefix.preg_quote($name[2]).'\1%', '${1}'.$prefix.self::fc_hash_value($code, $name[2], $value[2], 'name', FALSE)."$1", $input);
 						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.htmlspecialchars($prefix.$code).
 						               '</strong> :: Name: <strong>'.htmlspecialchars($prefix.$name[2]).
