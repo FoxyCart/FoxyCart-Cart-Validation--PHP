@@ -238,18 +238,21 @@ class FoxyCart_Helper {
 					$count['lists']++;
 					preg_match_all('%<option [^>]*value=([\'"])(.+?)\1[^>]*>(?:.*?)</option>%i', $list[0], $options, PREG_SET_ORDER);
 					self::$log[] = '<strong>Options:</strong> <pre>'.htmlspecialchars(print_r($options, true)).'</pre>';
+					unset( $form_part_signed );
 					foreach ($options as $option) {
+						if( !$form_part_signed ) $form_part_signed = $list[0];
 						$option_signed = preg_replace(
 							'%'.preg_quote($option[1]).preg_quote($option[2]).preg_quote($option[1]).'%',
 							$option[1].self::fc_hash_value($code, $list[2], $option[2], 'value', FALSE).$option[1],
 							$option[0]);
-						$form = str_replace($option[0], $option_signed, $form);
+						$form_part_signed = str_replace($option[0], $option_signed, $form_part_signed );
 						self::$log[] = '<strong>OPTION:</strong> Code: <strong>'.htmlspecialchars($prefix.$code).
 						               '</strong> :: Name: <strong>'.htmlspecialchars($prefix.$list[2]).
 						               '</strong> :: Value: <strong>'.htmlspecialchars($option[2]).
 						               '</strong><br />Initial option: '.htmlspecialchars($option[0]).
 						               '<br />Signed: <span style="color:#060;">'.htmlspecialchars($option_signed).'</span>';
 					}
+					$form = str_replace($list[0], $form_part_signed, $form);
 				}
 				self::$log[] = '<strong>FORM after OPTIONS:</strong> <pre>'.htmlspecialchars($form).'</pre>';
 
