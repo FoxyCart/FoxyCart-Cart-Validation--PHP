@@ -4,7 +4,7 @@
  *
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2010
- * @version 0.7.0.20100730
+ * @version 0.7.0.20110429
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
  * @example http://wiki.foxycart.com/docs/cart/validation
  * 
