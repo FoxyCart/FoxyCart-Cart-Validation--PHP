@@ -218,6 +218,11 @@ class FoxyCart_Helper {
 					if (preg_match('%name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(.+?)\1%i', $input, $name) > 0) {
 						preg_match('%value=([\'"])(.*?)\1%i', $input, $value);
 						$value = (count($value) > 0) ? $value : array('', '', '');
+						// Skip the cart excludes
+						if (in_array($prefix.$name[2], self::$cart_excludes) || in_array($prefix.$name[2], self::$cart_excludes_prefixes)) {
+							self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$name[2].'" = '.$value[2];
+							continue;
+						}
 						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.$prefix.htmlspecialchars(preg_quote($name[2])).'</strong>';
 						self::$log[] = '<strong>Replacement Pattern:</strong> ([\'"])'.$prefix.preg_quote($name[2]).'\1';
 						$value[2] = ($value[2] == '') ? '--OPEN--' : $value[2];
