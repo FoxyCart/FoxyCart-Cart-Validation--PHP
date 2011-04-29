@@ -218,15 +218,21 @@ class FoxyCart_Helper {
 					if (preg_match('%name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(.+?)\1%i', $input, $name) > 0) {
 						preg_match('%value=([\'"])(.*?)\1%i', $input, $value);
 						$value = (count($value) > 0) ? $value : array('', '', '');
+						preg_match('%type=([\'"])(.*?)\1%i', $input, $type);
+						$type = (count($type) > 0) ? $type : array('', '', '');
 						// Skip the cart excludes
 						if (in_array($prefix.$name[2], self::$cart_excludes) || in_array($prefix.$name[2], self::$cart_excludes_prefixes)) {
 							self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$name[2].'" = '.$value[2];
 							continue;
 						}
-						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.$prefix.htmlspecialchars(preg_quote($name[2])).'</strong>';
+						self::$log[] = '<strong>INPUT['.$type[2].']:</strong> Name: <strong>'.$prefix.htmlspecialchars(preg_quote($name[2])).'</strong>';
 						self::$log[] = '<strong>Replacement Pattern:</strong> ([\'"])'.$prefix.preg_quote($name[2]).'\1';
 						$value[2] = ($value[2] == '') ? '--OPEN--' : $value[2];
-						$input_signed = preg_replace('%([\'"])'.$prefix.preg_quote($name[2]).'\1%', '${1}'.$prefix.self::fc_hash_value($code, $name[2], $value[2], 'name', FALSE)."$1", $input);
+						if ($type[2] == 'radio') {
+							$input_signed = preg_replace('%([\'"])'.preg_quote($value[2]).'\1%', '${1}'.self::fc_hash_value($code, $name[2], $value[2], 'value', FALSE)."$1", $input);
+						} else {
+							$input_signed = preg_replace('%([\'"])'.$prefix.preg_quote($name[2]).'\1%', '${1}'.$prefix.self::fc_hash_value($code, $name[2], $value[2], 'name', FALSE)."$1", $input);
+						}
 						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.htmlspecialchars($prefix.$code).
 						               '</strong> :: Name: <strong>'.htmlspecialchars($prefix.$name[2]).
 						               '</strong> :: Value: <strong>'.htmlspecialchars($value[2]).
