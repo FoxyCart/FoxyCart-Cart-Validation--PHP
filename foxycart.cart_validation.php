@@ -3,8 +3,8 @@
  * FoxyCart_Helper
  *
  * @author FoxyCart.com
- * @copyright FoxyCart.com LLC, 2010
- * @version 0.7.0.20110429
+ * @copyright FoxyCart.com LLC, 2011
+ * @version 0.7.2.20111013
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
  * @example http://wiki.foxycart.com/docs/cart/validation
  * 
@@ -221,7 +221,7 @@ class FoxyCart_Helper {
 						preg_match('%type=([\'"])(.*?)\1%i', $input, $type);
 						$type = (count($type) > 0) ? $type : array('', '', '');
 						// Skip the cart excludes
-						if (in_array($prefix.$name[2], self::$cart_excludes) || in_array($prefix.$name[2], self::$cart_excludes_prefixes)) {
+						if (in_array($prefix.$name[2], self::$cart_excludes) || in_array(substr($prefix.$name[2], 0, 2), self::$cart_excludes_prefixes)) {
 							self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$name[2].'" = '.$value[2];
 							continue;
 						}
