@@ -5,9 +5,9 @@
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2011
  * @version 0.7.2.20111013
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
+ * @license MIT http://opensource.org/licenses/MIT
  * @example http://wiki.foxycart.com/docs/cart/validation
- * 
+ *
  * Requirements:
  *   - Form "code" values should not have leading or trailing whitespace.
  *   - Cannot use double-pipes in an input's name
