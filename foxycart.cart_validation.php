@@ -227,12 +227,13 @@ class FoxyCart_Helper {
 							continue;
 						}
 						self::$log[] = '<strong>INPUT['.$type[2].']:</strong> Name: <strong>'.$prefix.htmlspecialchars(preg_quote($name[2])).'</strong>';
-						self::$log[] = '<strong>Replacement Pattern:</strong> ([\'"])'.$prefix.preg_quote($name[2]).'\1';
 						$value[2] = ($value[2] == '') ? '--OPEN--' : $value[2];
 						if ($type[2] == 'radio') {
+							self::$log[] = '<strong>Replacement Pattern:</strong> ([\'"])'.$prefix.preg_quote($value[2]).'\1';
 							$input_signed = preg_replace('%([\'"])'.preg_quote($value[2]).'\1%', '${1}'.self::fc_hash_value($code, $name[2], $value[2], 'value', FALSE)."$1", $input);
 						} else {
-							$input_signed = preg_replace('%([\'"])'.$prefix.preg_quote($name[2]).'\1%', '${1}'.$prefix.self::fc_hash_value($code, $name[2], $value[2], 'name', FALSE)."$1", $input);
+							self::$log[] = '<strong>Replacement Pattern:</strong> name=([\'"])'.$prefix.preg_quote($name[2]).'\1';
+							$input_signed = preg_replace('%name=([\'"])'.$prefix.preg_quote($name[2]).'\1%', 'name=${1}'.$prefix.self::fc_hash_value($code, $name[2], $value[2], 'name', FALSE)."$1", $input);
 						}
 						self::$log[] = '<strong>INPUT:</strong> Code: <strong>'.htmlspecialchars($prefix.$code).
 						               '</strong> :: Name: <strong>'.htmlspecialchars($prefix.$name[2]).
@@ -275,7 +276,7 @@ class FoxyCart_Helper {
 					$count['textareas']++;
 					// Tackle implied "--OPEN--" first, if textarea is empty
 					$textarea[3] = ($textarea[3] == '') ? '--OPEN--' : $textarea[3];
-					$textarea_signed = preg_replace('%([\'"])'.preg_quote($prefix.$textarea[2]).'\1%', "$1".self::fc_hash_value($code, $textarea[2], $textarea[3], 'name', FALSE)."$1", $textarea[0]);
+					$textarea_signed = preg_replace('%name=([\'"])'.preg_quote($prefix.$textarea[2]).'\1%', "name=$1".self::fc_hash_value($code, $textarea[2], $textarea[3], 'name', FALSE)."$1", $textarea[0]);
 					$form = str_replace($textarea[0], $textarea_signed, $form);
 					self::$log[] = '<strong>TEXTAREA:</strong> Code: <strong>'.htmlspecialchars($prefix.$code).
 					               '</strong> :: Name: <strong>'.htmlspecialchars($prefix.$textarea[2]).
