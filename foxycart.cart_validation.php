@@ -4,7 +4,7 @@
  *
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2011
- * @version 0.7.2.20111013
+ * @version 2.0.0.20140730
  * @license MIT http://opensource.org/licenses/MIT
  * @example http://wiki.foxycart.com/docs/cart/validation
  *
@@ -21,15 +21,27 @@ class FoxyCart_Helper {
 	 **/
 	private static $secret = 'ENTER YOUR KEY HERE';
 
+	public static function setSecret($secret) {
+		self::$secret = $secret;
+	}
+	public static function getSecret() {
+		return self::$secret;
+	}
+
 	/**
 	 * Cart URL
 	 *
 	 * @var string
 	 * Notes: Could be 'https://yourdomain.foxycart.com/cart' or 'https://secure.yourdomain.com/cart'
 	 **/
-	// protected static $cart_url = 'https://yourdomain.foxycart.com/cart';
 	protected static $cart_url = 'https://YOURDOMAIN.foxycart.com/cart';
 
+	public static function setCartUrl($cart_url) {
+		self::$cart_url = $cart_url;
+	}
+	public static function getCartUrl() {
+		return self::$cart_url;
+	}
 
 	/**
 	 * Cart Excludes
@@ -88,6 +100,11 @@ class FoxyCart_Helper {
 		foreach ($pairs as $pair) {
 			if ($pair['name'] == 'code') {
 				$codes[$pair['prefix']] = $pair['value'];
+			}
+		}
+		foreach ($pairs as $pair) {
+			if ($pair['name'] == 'parent_code') {
+				$codes[$pair['prefix']] .= $pair['value'];
 			}
 		}
 		if ( ! count($codes)) {
@@ -213,6 +230,20 @@ class FoxyCart_Helper {
 
 				// Sign all <input /> elements with matching prefix
 				preg_match_all('%<input [^>]*?name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(?:.+?)\1[^>]*>%i', $form, $inputs);
+
+				// get parent codes if they exist and append them to our code
+				$parent_code_index = false;
+				foreach ($inputs[0] as $key => $item) {
+					if (strpos($item, 'parent_code') !== false) {
+						$parent_code_index = $key;
+					}
+				}
+				if ($parent_code_index !== false) {
+					if (preg_match('%value=([\'"])(.*?)\1%i', $inputs[0][$parent_code_index], $value)) {
+						$code .= $value[2];
+					}
+				}
+
 				foreach ($inputs[0] as $input) {
 					$count['inputs']++;
 					// Test to make sure both name and value attributes are found
