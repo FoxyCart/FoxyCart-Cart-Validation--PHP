@@ -53,10 +53,12 @@ class FoxyCart_Helper {
 		// Cart values
 		'cart', 'fcsid', 'empty', 'coupon', 'output', 'sub_token', 'redirect', 'callback', '_',
 		// Checkout pre-population values
-	        'customer_email', 'billing_first_name', 'billing_last_name', 'billing_address1', 'billing_address2',
+	        'customer_email', 'customer_first_name', 'customer_last_name', 'customer_address1', 'customer_address2',
+	        'customer_city', 'customer_state', 'customer_postal_code', 'customer_country', 'customer_phone', 'customer_company',
+	        'billing_first_name', 'billing_last_name', 'billing_address1', 'billing_address2',
 	        'billing_city', 'billing_postal_code', 'billing_region', 'billing_phone', 'billing_company',
 	        'shipping_first_name', 'shipping_last_name', 'shipping_address1', 'shipping_address2',
-	        'shipping_city', 'shipping_postal_code', 'shipping_region', 'shipping_phone', 'shipping_company',
+	        'shipping_city', 'shipping_state', 'shipping_country', 'shipping_postal_code', 'shipping_region', 'shipping_phone', 'shipping_company',
 	);
 	protected static $cart_excludes_prefixes = array(
 		'h:', 'x:', '__',
