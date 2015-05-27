@@ -81,7 +81,7 @@ class FoxyCart_Helper {
 	 * @return string
 	 **/
 	public static function fc_hash_querystring($qs, $output = TRUE) {
-		self::$log[] = '<strong>Signing link</strong> with data: '.htmlspecialchars(substr($qs, 0, 150)).'...';
+		self::$log[] = '<strong>Signing link</strong> with data: '.htmlspecialchars(substr($qs, 0, 1500)).'...';
 		$fail = self::$cart_url.'?'.$qs;
 
 		// If the link appears to be hashed already, don't bother
@@ -188,14 +188,15 @@ class FoxyCart_Helper {
 		$count['textareas'] = 0;
 
 		// Find and sign all the links
-		preg_match_all('%<a .*?href=[\'"]'.preg_quote(self::$cart_url).'(?:\.php)?\?(.+?)[\'"].*?>%i', $html, $querystrings);
+		preg_match_all('%<a .*?href=([\'"])'.preg_quote(self::$cart_url).'(?:\.php)?\?(.+?)\1.*?>%i', $html, $querystrings);
+		self::$log[] = '<strong>Querystrings: </strong><pre>' . htmlspecialchars(print_r($querystrings, true)) . '</pre>';
 		// print_r($querystrings);
-		foreach ($querystrings[1] as $querystring) {
+		foreach ($querystrings[2] as $querystring) {
 			// If it's already signed, skip it.
 			if (preg_match('%&(?:amp;)?hash=%i', $querystring)) {
 				continue;
 			}
-			$pattern = '%(href=[\'"])'.preg_quote(self::$cart_url, '%').'(?:\.php)?\?'.preg_quote($querystring, '%').'([\'"])%i';
+			$pattern = '%(href=([\'"]))'.preg_quote(self::$cart_url, '%').'(?:\.php)?\?'.preg_quote($querystring, '%').'\2%i';
 			$signed = self::fc_hash_querystring($querystring, FALSE);
 			$html = preg_replace($pattern, '$1'.$signed.'$2', $html, -1, $count['temp']);
 			$count['links'] += $count['temp'];
@@ -335,9 +336,9 @@ class FoxyCart_Helper {
 		$output = '';
 		if (self::$debug) {
 			self::$log['Summary'] = $count['links'].' links signed. '.$count['forms'].' forms signed. '.$count['inputs'].' inputs signed. '.$count['lists'].' lists signed. '.$count['textareas'].' textareas signed.';
-			$output .= '<h3>FoxyCart HMAC Debugging:</h3><ul>';
+			$output .= '<div style="background:#fff;"><h3>FoxyCart HMAC Debugging:</h3><ul>';
 			foreach (self::$log as $name => $value) {
-				$output .= '<li><strong>'.$name.':</strong> '.$value.'</li>';
+				$output .= '<li><strong>'.$name.':</strong> '.$value.'</li>'."\n";
 			}
 			$output .= '</ul><hr />';
 		}
