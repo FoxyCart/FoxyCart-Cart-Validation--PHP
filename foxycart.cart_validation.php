@@ -148,11 +148,13 @@ class FoxyCart_Helper {
 		if (!$product_code || !$option_name) {
 			return FALSE;
 		}
+		$option_name = str_replace(' ', '_', $option_name);
 		if ($option_value == '--OPEN--') {
 			$hash = hash_hmac('sha256', $product_code.$option_name.$option_value, self::$secret);
 			$value = ($urlencode) ? urlencode($option_name).'||'.$hash.'||open' : $option_name.'||'.$hash.'||open';
 		} else {
 			$hash = hash_hmac('sha256', $product_code.$option_name.$option_value, self::$secret);
+			self::$log[] = '<strong>Challenge: </strong><span style="font-family:monospace; color:blue"><code>'.$product_code.$option_name.$option_value.'</code></span>';
 			if ($method == 'name') {
 				$value = ($urlencode) ? urlencode($option_name).'||'.$hash : $option_name.'||'.$hash;
 			} else {
