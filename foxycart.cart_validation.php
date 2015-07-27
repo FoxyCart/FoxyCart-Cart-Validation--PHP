@@ -4,7 +4,7 @@
  *
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2011
- * @version 2.0.0.20140730
+ * @version 2.0.0.20150723
  * @license MIT http://opensource.org/licenses/MIT
  * @example http://wiki.foxycart.com/docs/cart/validation
  *
@@ -91,7 +91,7 @@ class FoxyCart_Helper {
 		}
 
 		// Stick an ampersand on the beginning of the querystring to make matching the first element a little easier
-		$qs = '&'.urldecode($qs);
+		$qs = '&'.$qs;
 
 		// Get all the prefixes, codes, and name=value pairs
 		preg_match_all('%(?P<amp>&(?:amp;)?)(?P<prefix>[a-z0-9]{1,3}:)?(?P<name>[^=]+)=(?P<value>[^&]+)%', $qs, $pairs, PREG_SET_ORDER);
@@ -124,7 +124,7 @@ class FoxyCart_Helper {
 			}
 
 			// Continue to sign the value and replace the name=value in the querystring with name=value||hash
-			$value = self::fc_hash_value($codes[$pair['prefix']], $pair['name'], $pair['value'], 'value', FALSE, 'urlencode');
+			$value = self::fc_hash_value($codes[$pair['prefix']], urldecode($pair['name']), urldecode($pair['value']), 'value', FALSE, 'urlencode');
 			$replacement = $pair['amp'].$pair['prefix'].urlencode($pair['name']).'='.$value;
 			$qs = str_replace($pair[0], $replacement, $qs);
 			self::$log[] = 'Signed <strong>'.$pair['name'].'</strong> = <strong>'.$pair['value'].'</strong> with '.$replacement.'.<br />Replacing: '.$pair[0].'<br />With... '.$replacement;
@@ -193,7 +193,7 @@ class FoxyCart_Helper {
 		// print_r($querystrings);
 		foreach ($querystrings[2] as $querystring) {
 			// If it's already signed, skip it.
-			if (preg_match('%&(?:amp;)?hash=%i', $querystring)) {
+			if (strpos($querystring, '||')) {
 				continue;
 			}
 			$pattern = '%(href=([\'"]))'.preg_quote(self::$cart_url, '%').'(?:\.php)?\?'.preg_quote($querystring, '%').'\2%i';
