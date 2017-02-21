@@ -61,7 +61,7 @@ class FoxyCart_Helper {
 	        'shipping_city', 'shipping_state', 'shipping_country', 'shipping_postal_code', 'shipping_region', 'shipping_phone', 'shipping_company',
 	);
 	protected static $cart_excludes_prefixes = array(
-		'h:', 'x:', '__',
+		'h:', 'x:', '__', 'utm_'
 	);
 
 	/**
@@ -118,14 +118,26 @@ class FoxyCart_Helper {
 		// Sign the name/value pairs
 		foreach ($pairs as $pair) {
 			// Skip the cart excludes
-			if (in_array($pair['name'], self::$cart_excludes) || in_array($pair['prefix'], self::$cart_excludes_prefixes)) {
+			$include_pair = true;
+			if (in_array($pair['name'], self::$cart_excludes)) {
+				$include_pair = false;
+			}
+			foreach (self::$cart_excludes_prefixes as $exclude_prefix) {
+				if (substr(strtolower($pair['name']), 0, strlen($exclude_prefix)) == $exclude_prefix) {
+					$include_pair = false;
+				}
+			}
+			if (!$include_pair) {
 				self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$pair['prefix'].$pair['name'].'" = '.$pair['value'];
 				continue;
 			}
-
 			// Continue to sign the value and replace the name=value in the querystring with name=value||hash
 			$value = self::fc_hash_value($codes[$pair['prefix']], urldecode($pair['name']), urldecode($pair['value']), 'value', FALSE, 'urlencode');
-			$replacement = $pair['amp'].$pair['prefix'].urlencode($pair['name']).'='.$value;
+			if (urldecode($pair['value']) == '--OPEN--') {
+				$replacement = $pair['amp'].$value.'=';
+			} else {
+				$replacement = $pair['amp'].$pair['prefix'].urlencode($pair['name']).'='.$value;
+			}
 			$qs = str_replace($pair[0], $replacement, $qs);
 			self::$log[] = 'Signed <strong>'.$pair['name'].'</strong> = <strong>'.$pair['value'].'</strong> with '.$replacement.'.<br />Replacing: '.$pair[0].'<br />With... '.$replacement;
 		}
@@ -258,7 +270,16 @@ class FoxyCart_Helper {
 						preg_match('%type=([\'"])(.*?)\1%i', $input, $type);
 						$type = (count($type) > 0) ? $type : array('', '', '');
 						// Skip the cart excludes
-						if (in_array($prefix.$name[2], self::$cart_excludes) || in_array(substr($prefix.$name[2], 0, 2), self::$cart_excludes_prefixes)) {
+						$include_input = true;
+						if (in_array($prefix.$name[2], self::$cart_excludes)) {
+							$include_input = false;
+						}
+						foreach (self::$cart_excludes_prefixes as $exclude_prefix) {
+							if (substr(strtolower($prefix.$name[2]), 0, strlen($exclude_prefix)) == $exclude_prefix) {
+								$include_input = false;
+							}
+						}
+						if (!$include_input) {
 							self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$name[2].'" = '.$value[2];
 							continue;
 						}
