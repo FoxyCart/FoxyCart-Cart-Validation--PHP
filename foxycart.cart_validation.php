@@ -123,7 +123,7 @@ class FoxyCart_Helper {
                 $include_pair = false;
             }
             foreach (self::$cart_excludes_prefixes as $exclude_prefix) {
-                if (substr(strtolower($pair['name']), 0, strlen($exclude_prefix)) == $exclude_prefix) {
+                if (substr(strtolower($pair['prefix'].$pair['name']), 0, strlen($exclude_prefix)) == $exclude_prefix) {
                     $include_pair = false;
                 }
             }
@@ -306,6 +306,20 @@ class FoxyCart_Helper {
                 preg_match_all('%<select [^>]*name=([\'"])'.preg_quote($prefix).'(?![0-9]{1,3})(.+?)\1[^>]*>(.+?)</select>%is', $form, $lists, PREG_SET_ORDER);
                 foreach ($lists as $list) {
                     $count['lists']++;
+                    // Skip the cart excludes
+                    $include_input = true;
+                    if (in_array($prefix.$list[2], self::$cart_excludes)) {
+                        $include_input = false;
+                    }
+                    foreach (self::$cart_excludes_prefixes as $exclude_prefix) {
+                        if (substr(strtolower($prefix.$list[2]), 0, strlen($exclude_prefix)) == $exclude_prefix) {
+                            $include_input = false;
+                        }
+                    }
+                    if (!$include_input) {
+                        self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$list[2];
+                        continue;
+                    }
                     preg_match_all('%<option [^>]*value=([\'"])(.+?)\1[^>]*>(?:.*?)</option>%i', $list[0], $options, PREG_SET_ORDER);
                     self::$log[] = '<strong>Options:</strong> <pre>'.htmlspecialchars(print_r($options, true)).'</pre>';
                     unset( $form_part_signed );
@@ -331,6 +345,20 @@ class FoxyCart_Helper {
                 // echo "\n\nTextareas: ".print_r($textareas, true);
                 foreach ($textareas as $textarea) {
                     $count['textareas']++;
+                    // Skip the cart excludes
+                    $include_input = true;
+                    if (in_array($prefix.$textarea[2], self::$cart_excludes)) {
+                        $include_input = false;
+                    }
+                    foreach (self::$cart_excludes_prefixes as $exclude_prefix) {
+                        if (substr(strtolower($prefix.$textarea[2]), 0, strlen($exclude_prefix)) == $exclude_prefix) {
+                            $include_input = false;
+                        }
+                    }
+                    if (!$include_input) {
+                        self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$textarea[2];
+                        continue;
+                    }
                     // Tackle implied "--OPEN--" first, if textarea is empty
                     $textarea[3] = ($textarea[3] == '') ? '--OPEN--' : $textarea[3];
                     $textarea_signed = preg_replace('%name=([\'"])'.preg_quote($prefix.$textarea[2]).'\1%', "name=$1".self::fc_hash_value($code, $textarea[2], $textarea[3], 'name', FALSE)."$1", $textarea[0]);
