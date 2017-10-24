@@ -4,7 +4,7 @@
  *
  * @author FoxyCart.com
  * @copyright FoxyCart.com LLC, 2011
- * @version 2.0.0.20170426
+ * @version 2.0.0.20171024
  * @license MIT http://opensource.org/licenses/MIT
  * @example http://wiki.foxycart.com/docs/cart/validation
  *
