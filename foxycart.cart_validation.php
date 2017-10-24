@@ -50,8 +50,10 @@ class FoxyCart_Helper {
      * @var array
      */
     protected static $cart_excludes = array(
+        // Analytics values
+        '_', '_ke',
         // Cart values
-        'cart', 'fcsid', 'empty', 'coupon', 'output', 'sub_token', 'redirect', 'callback', '_', 'locale', 'template_set',
+        'cart', 'fcsid', 'empty', 'coupon', 'output', 'sub_token', 'redirect', 'callback', 'locale', 'template_set',
         // Checkout pre-population values
             'customer_email', 'customer_first_name', 'customer_last_name', 'customer_address1', 'customer_address2',
             'customer_city', 'customer_state', 'customer_postal_code', 'customer_country', 'customer_phone', 'customer_company',
