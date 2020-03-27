@@ -135,7 +135,7 @@ class FoxyCart_Helper {
             }
             // Continue to sign the value and replace the name=value in the querystring with name=value||hash
             $value = self::fc_hash_value($codes[$pair['prefix']], urldecode($pair['name']), urldecode($pair['value']), 'value', FALSE, 'urlencode');
-            if (urldecode($pair['value']) == '--OPEN--') {
+            if (urldecode($pair['value']) === '--OPEN--') {
                 $replacement = $pair['amp'].$value.'=';
             } else {
                 $replacement = $pair['amp'].$pair['prefix'].urlencode($pair['name']).'='.$value;
@@ -163,7 +163,7 @@ class FoxyCart_Helper {
             return FALSE;
         }
         $option_name = str_replace(' ', '_', $option_name);
-        if ($option_value == '--OPEN--') {
+        if ($option_value === '--OPEN--') {
             $hash = hash_hmac('sha256', $product_code.$option_name.$option_value, self::$secret);
             $value = ($urlencode) ? urlencode($option_name).'||'.$hash.'||open' : $option_name.'||'.$hash.'||open';
         } else {
