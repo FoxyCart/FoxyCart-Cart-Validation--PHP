@@ -322,10 +322,14 @@ class FoxyCart_Helper {
                         self::$log[] = '<strong style="color:purple;">Skipping</strong> the reserved parameter or prefix "'.$prefix.$list[2];
                         continue;
                     }
-                    preg_match_all('%<option [^>]*value=([\'"])(.+?)\1[^>]*>(?:.*?)</option>%i', $list[0], $options, PREG_SET_ORDER);
+                    preg_match_all('%<option [^>]*value=([\'"])(.*?)\1[^>]*>(?:.*?)</option>%i', $list[0], $options, PREG_SET_ORDER);
                     self::$log[] = '<strong>Options:</strong> <pre>'.htmlspecialchars(print_r($options, true)).'</pre>';
                     unset( $form_part_signed );
                     foreach ($options as $option) {
+                        if (empty($option[2])) {
+                            self::$log[] = '<strong style="color:purple;">Skipping</strong> empty value: <pre>'.htmlspecialchars(print_r($option[0], true)).'</pre>';
+                            continue;
+                        }
                         if( !isset($form_part_signed) ) $form_part_signed = $list[0];
                         $option_signed = preg_replace(
                             '%'.preg_quote($option[1]).preg_quote($option[2]).preg_quote($option[1]).'%',
