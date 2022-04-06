@@ -51,7 +51,7 @@ class FoxyCart_Helper {
      */
     protected static $cart_excludes = array(
         // Analytics values
-        '_', '_ga', '_ke',
+        '_', '_ga', '_ke','fbclid',
         // Cart values
         'cart', 'fcsid', 'empty', 'coupon', 'output', 'sub_token', 'redirect', 'callback', 'locale', 'template_set',
         // Checkout pre-population values
