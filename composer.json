@@ -1,0 +1,20 @@
+{
+  "name": "foxycart/php-validation",
+  "description": "PHP Cart validation for FoxyCart",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "FoxyCart",
+      "homepage": "https://www.foxy.io/"
+    }
+  ],
+  "require": {
+    "php": ">=5.3.3,<7",
+    "ext-hash": "*"
+  },
+  "config": {
+    "process-timeout": 600
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
